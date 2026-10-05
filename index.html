@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="iu" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tusaajiit / Inuit Deaf & Deaf of Hearing Youth Inuktitut</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Inter & Noto Sans Canadian Aboriginal Syllabics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+Canadian+Aboriginal&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans Canadian Aboriginal', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* High Contrast Mode Styles */
+        .high-contrast {
+            background-color: #000000 !important;
+            color: #FFFF00 !important;
+        }
+        .high-contrast header, .high-contrast footer, .high-contrast nav, .high-contrast .card-bg {
+            background-color: #111111 !important;
+            border-color: #FFFF00 !important;
+            color: #FFFF00 !important;
+        }
+        .high-contrast button, .high-contrast a {
+            color: #00FFFF !important;
+        }
+        .high-contrast .accent-btn {
+            background-color: #FFFF00 !important;
+            color: #000000 !important;
+            font-weight: bold;
+        }
+
+        /* Flashcard Flip Effect */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Pulse glow for active sign visual aids */
+        @keyframes visualGlow {
+            0%, 100% { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+            50% { border-color: #06b6d4; box-shadow: 0 0 25px rgba(6, 182, 212, 0.7); }
+        }
+        .visual-active {
+            animation: visualGlow 2.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans transition-all duration-200" id="app-body">
+
+    <!-- Accessibility Control Bar -->
+    <div class="bg-slate-900 text-white px-4 py-2 flex flex-wrap justify-between items-center text-xs md:text-sm border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="font-semibold tracking-wide">Inuit Sign Language (ISL) & Inuktitut Accessible Hub</span>
+        </div>
+        <div class="flex items-center space-x-4 mt-1 sm:mt-0">
+            <!-- Text Size Controls -->
+            <div class="flex items-center space-x-1 bg-slate-800 rounded-lg p-1">
+                <span class="text-slate-400 px-1 text-xs">Text:</span>
+                <button onclick="changeFontSize('small')" class="px-2 py-0.5 hover:bg-slate-700 rounded text-xs font-bold" title="Normal Font">A</button>
+                <button onclick="changeFontSize('medium')" class="px-2 py-0.5 hover:bg-slate-700 rounded text-sm font-bold" title="Medium Font">A+</button>
+                <button onclick="changeFontSize('large')" class="px-2 py-0.5 hover:bg-slate-700 rounded text-base font-bold" title="Large Font">A++</button>
+            </div>
+            <!-- High Contrast Toggle -->
+            <button onclick="toggleHighContrast()" class="flex items-center space-x-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-2.5 py-1 rounded-lg transition" title="Toggle High Contrast Mode">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+                <span>Contrast</span>
+            </button>
+            <!-- Simplified Layout Mode -->
+            <button onclick="toggleSimplifiedLayout()" class="flex items-center space-x-1 bg-cyan-600 hover:bg-cyan-700 text-white font-medium px-2.5 py-1 rounded-lg transition">
+                <i data-lucide="layout-template" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Simple Layout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            
+            <!-- Logo / Branding -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="bg-gradient-to-tr from-cyan-600 to-blue-600 text-white p-3 rounded-xl shadow-md flex items-center justify-center">
+                    <i data-lucide="hand" class="w-7 h-7 transform -rotate-12"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-none flex items-center gap-2">
+                        ᑐᓵᔩᑦ <span class="text-cyan-600">Tusaajiit</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 font-semibold tracking-wide mt-1">Deaf & Hard of Hearing Inuit Youth</p>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-1 font-semibold text-slate-700">
+                <button onclick="navigateTo('home')" id="nav-home" class="nav-btn px-3.5 py-2 rounded-lg hover:bg-slate-100 hover:text-cyan-600 transition">
+                    <span class="block text-xs text-cyan-600 font-bold">ᐊᖏᕐᕋᖅ</span>
+                    Home
+                </button>
+                <button onclick="navigateTo('learn')" id="nav-learn" class="nav-btn px-3.5 py-2 rounded-lg hover:bg-slate-100 hover:text-cyan-600 transition">
+                    <span class="block text-xs text-cyan-600 font-bold">ᐃᓕᓐᓂᐊᕐᓂᖅ</span>
+                    Learn ISL & Syllabics
+                </button>
+                <button onclick="navigateTo('culture')" id="nav-culture" class="nav-btn px-3.5 py-2 rounded-lg hover:bg-slate-100 hover:text-cyan-600 transition">
+                    <span class="block text-xs text-cyan-600 font-bold">ᐃᓕᖅᑯᓯᖅ</span>
+                    Culture & Visual Stories
+                </button>
+                <button onclick="navigateTo('community')" id="nav-community" class="nav-btn px-3.5 py-2 rounded-lg hover:bg-slate-100 hover:text-cyan-600 transition">
+                    <span class="block text-xs text-cyan-600 font-bold">ᐃᓅᖃᑎᒌᑦ</span>
+                    Youth Hub
+                </button>
+                <button onclick="navigateTo('resources')" id="nav-resources" class="nav-btn px-3.5 py-2 rounded-lg hover:bg-slate-100 hover:text-cyan-600 transition">
+                    <span class="block text-xs text-cyan-600 font-bold">ᐃᑲᔪᕈᑎᒃᓴᑦ</span>
+                    Resources
+                </button>
+            </nav>
+
+            <!-- Dev Environment Repository Quick Link -->
+            <div class="hidden lg:flex items-center">
+                <a href="https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/" target="_blank" rel="noopener" class="accent-btn bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-lg border border-slate-700 flex items-center space-x-2 shadow-sm transition">
+                    <i data-lucide="github" class="w-4 h-4 text-cyan-400"></i>
+                    <span>Open GitHub Workspace</span>
+                    <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-700" aria-label="Toggle Navigation">
+                <i data-lucide="menu" class="w-7 h-7"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-2 pb-6 space-y-2">
+            <button onclick="navigateTo('home'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-100 font-bold border-l-4 border-cyan-500">
+                <span class="block text-xs text-cyan-600">ᐊᖏᕐᕋᖅ</span> Home
+            </button>
+            <button onclick="navigateTo('learn'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-100 font-bold">
+                <span class="block text-xs text-cyan-600">ᐃᓕᓐᓂᐊᕐᓂᖅ</span> Learn ISL & Syllabics
+            </button>
+            <button onclick="navigateTo('culture'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-100 font-bold">
+                <span class="block text-xs text-cyan-600">ᐃᓕᖅᑯᓯᖅ</span> Culture & Visual Stories
+            </button>
+            <button onclick="navigateTo('community'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-100 font-bold">
+                <span class="block text-xs text-cyan-600">ᐃᓅᖃᑎᒌᑦ</span> Youth Community Hub
+            </button>
+            <button onclick="navigateTo('resources'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-100 font-bold">
+                <span class="block text-xs text-cyan-600">ᐃᑲᔪᕈᑎᒃᓴᑦ</span> Resources & Support
+            </button>
+            <div class="pt-2 border-t border-slate-100">
+                <a href="https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/" target="_blank" rel="noopener" class="w-full bg-slate-900 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center space-x-2 text-sm">
+                    <i data-lucide="github" class="w-4 h-4 text-cyan-400"></i>
+                    <span>GitHub Dev Repository</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT VIEW CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= PAGE 1: HOME PAGE ================= -->
+        <section id="page-home" class="view-page space-y-12">
+            
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl overflow-hidden shadow-xl p-8 sm:p-12 lg:p-16 border border-slate-800">
+                <div class="absolute -right-12 -bottom-12 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute right-1/3 -top-20 w-80 h-80 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-3xl space-y-6">
+                    <div class="inline-flex items-center space-x-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Inuit Sign Language & Visual Learning</span>
+                    </div>
+
+                    <h2 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+                        ᑐᓐᖓᓱᒋᑦ ᐃᓄᐃᑦ ᓈᓚᒍᓐᓇᖏᑦᑐᑦ ᒪᒃᑯᒃᑐᑦ ᓄᓇᖓᓐᓄᑦ
+                    </h2>
+                    <p class="text-xl sm:text-2xl font-bold text-cyan-300">
+                        Welcome to the Inuit Deaf & Hard of Hearing Youth Space
+                    </p>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                        A visual-first community tailored for Northern youth. Explore Inuit Sign Language (ISL), learn Inuktitut syllabics through interactive graphics, watch captioned storytelling, and connect with peers across Inuit Nunangat.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <button onclick="navigateTo('learn')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold px-6 py-3.5 rounded-xl shadow-lg flex items-center space-x-2 text-base transition transform hover:-translate-y-0.5">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                            <span>Start Learning ISL</span>
+                        </button>
+                        <button onclick="navigateTo('resources')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-6 py-3.5 rounded-xl border border-slate-700 flex items-center space-x-2 text-base transition">
+                            <i data-lucide="building-2" class="w-5 h-5 text-cyan-400"></i>
+                            <span>Nunavut Gov & Support Links</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Key Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-cyan-100 text-cyan-700 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="hand" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-xs font-bold text-cyan-600 uppercase tracking-wider mb-1">ᐃᓕᓐᓂᐊᕐᓂᖅ</div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Inuit Sign Language (ISL)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Discover traditional gesture systems, community sign practices, and standardized visual vocabulary representing Arctic wildlife, weather, and daily life.
+                    </p>
+                    <button onclick="navigateTo('learn')" class="text-cyan-600 font-bold text-sm inline-flex items-center hover:underline">
+                        Explore Flashcards <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="languages" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">ᐃᓄᒃᑎᑐᑦ ᖃᓕᐅᔮᖅᐸᐃᑦ</div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Inuktitut Syllabics</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Pair Inuktitut syllabic characters (ᐃ, ᐠ, ᑕ, ᑭ) with sign illustrations and English translations designed for visual learners.
+                    </p>
+                    <button onclick="navigateTo('learn')" class="text-indigo-600 font-bold text-sm inline-flex items-center hover:underline">
+                        View Syllabic Guides <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">ᓄᓇᓕᖕᓂ ᐃᑲᔪᖅᑎᒌᑦ</div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Deaf Youth Connection</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Share stories, participate in video art showcases, connect with Elders who know traditional gesturing, and join accessible youth gatherings.
+                    </p>
+                    <button onclick="navigateTo('community')" class="text-emerald-600 font-bold text-sm inline-flex items-center hover:underline">
+                        Join Community <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: LEARN INUKTITUT & ISL ================= -->
+        <section id="page-learn" class="view-page hidden space-y-8">
+            <div class="border-b border-slate-200 pb-4">
+                <div class="text-xs font-extrabold text-cyan-600 tracking-wider uppercase">Interactive Learning Hub</div>
+                <h2 class="text-3xl font-black text-slate-900">ᐃᓕᓐᓂᐊᕐᓂᖅ ISL ᐊᒻᒪ ᐃᓄᒃᑎᑐᑦ</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    Interactive flashcards with visual diagrams, handshape guides, Inuktitut syllabics, and sound/vibration cues.
+                </p>
+            </div>
+
+            <!-- Filter Categories -->
+            <div class="flex flex-wrap gap-2 text-sm font-semibold">
+                <button onclick="filterFlashcards('all')" id="btn-filter-all" class="filter-btn bg-cyan-600 text-white px-4 py-2 rounded-xl transition">All Words</button>
+                <button onclick="filterFlashcards('nature')" id="btn-filter-nature" class="filter-btn bg-slate-200 text-slate-700 hover:bg-slate-300 px-4 py-2 rounded-xl transition">Nature & Weather</button>
+                <button onclick="filterFlashcards('animals')" id="btn-filter-animals" class="filter-btn bg-slate-200 text-slate-700 hover:bg-slate-300 px-4 py-2 rounded-xl transition">Arctic Wildlife</button>
+                <button onclick="filterFlashcards('family')" id="btn-filter-family" class="filter-btn bg-slate-200 text-slate-700 hover:bg-slate-300 px-4 py-2 rounded-xl transition">Family & People</button>
+                <button onclick="filterFlashcards('phrases')" id="btn-filter-phrases" class="filter-btn bg-slate-200 text-slate-700 hover:bg-slate-300 px-4 py-2 rounded-xl transition">Daily Greetings</button>
+            </div>
+
+            <!-- Flashcards Grid Container -->
+            <div id="flashcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: CULTURE & STORIES ================= -->
+        <section id="page-culture" class="view-page hidden space-y-8">
+            <div class="border-b border-slate-200 pb-4">
+                <div class="text-xs font-extrabold text-cyan-600 tracking-wider uppercase">Visual Storytelling & Heritage</div>
+                <h2 class="text-3xl font-black text-slate-900">ᐃᓕᖅᑯᓯᖅ ᐊᒻᒪ ᐅᓂᒃᑲᐅᓯᑦ</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    Visual-first Arctic stories, Elder gestures, drum dance visuals, and community arts with embedded transcriptions and sign captions.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Story Card 1 -->
+                <div class="card-bg bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                    <div class="bg-slate-800 text-white p-6 relative aspect-video flex flex-col justify-end">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
+                        <div class="relative z-10 space-y-2">
+                            <span class="bg-cyan-500 text-slate-950 text-xs font-black px-2.5 py-1 rounded">Elder Visual Story</span>
+                            <h3 class="text-2xl font-black text-white">The Sun and the Moon (Siqiniq & Taqqiq)</h3>
+                            <p class="text-xs text-slate-300">Told by Elder Mary Inukpuk with ISL Captions & Syllabics</p>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            A classic Inuit legend told through expressive visual storytelling, gestures, and clear visual captions for Deaf youth.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Story Card 2 -->
+                <div class="card-bg bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                    <div class="bg-slate-800 text-white p-6 relative aspect-video flex flex-col justify-end">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent"></div>
+                        <div class="relative z-10 space-y-2">
+                            <span class="bg-amber-400 text-slate-950 text-xs font-black px-2.5 py-1 rounded">Visual Performance</span>
+                            <h3 class="text-2xl font-black text-white">Visual Rhythm & Northern Drum Dancing</h3>
+                            <p class="text-xs text-slate-300">Vibrational music and visual rhythm cues for hard of hearing youth</p>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Experience drum dancing through floor vibration cues, light pulses, and full-body sign expressions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: YOUTH COMMUNITY HUB ================= -->
+        <section id="page-community" class="view-page hidden space-y-8">
+            <div class="border-b border-slate-200 pb-4">
+                <div class="text-xs font-extrabold text-cyan-600 tracking-wider uppercase">Youth Connection & Events</div>
+                <h2 class="text-3xl font-black text-slate-900">ᐃᓅᖃᑎᒌᑦ ᒪᒃᑯᒃᑐᑦ</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    Connect with Deaf and Hard of Hearing Inuit youth across Nunavut, Nunavik, Nunatsiavut, and Inuvialuit.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <h3 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                                <i data-lucide="message-square" class="w-5 h-5 text-cyan-600"></i>
+                                Visual Chat & Art Showcase
+                            </h3>
+                            <button onclick="openNewPostModal()" class="bg-cyan-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-cyan-700">
+                                + Share Artwork / Sign Clip
+                            </button>
+                        </div>
+                        <div id="posts-feed" class="space-y-4">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                                <div class="flex justify-between items-center text-xs text-slate-500">
+                                    <span class="font-bold text-slate-800">Qupanuk (Iqaluit)</span>
+                                    <span>2 hours ago</span>
+                                </div>
+                                <p class="text-sm text-slate-700 font-medium">
+                                    "Created a new ISL sign card for 'Aurora Borealis' (ᐊᕐᓴᕐᓃᑦ)! Check out the wavy hand motion visual chart."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card-bg bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 rounded-2xl border border-slate-800 space-y-3">
+                        <div class="flex items-center space-x-2 text-cyan-400 font-bold text-xs uppercase tracking-wider">
+                            <i data-lucide="code" class="w-4 h-4"></i>
+                            <span>Developer Workspace</span>
+                        </div>
+                        <h4 class="font-bold text-base">Contribute to this Project</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            This platform is open source! Add new ISL flashcard graphics, fix Inuktitut syllabics, or enhance accessibility.
+                        </p>
+                        <a href="https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/" target="_blank" rel="noopener" class="block text-center bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-2.5 rounded-lg text-xs transition">
+                            Launch Dev Environment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: RESOURCES & SUPPORT ================= -->
+        <section id="page-resources" class="view-page hidden space-y-8">
+            <div class="border-b border-slate-200 pb-4">
+                <div class="text-xs font-extrabold text-cyan-600 tracking-wider uppercase">Territorial & Support Directory</div>
+                <h2 class="text-3xl font-black text-slate-900">ᐃᑲᔪᕈᑎᒃᓴᑦ ᐊᒻᒪ ᑐᓴᐅᒪᔾᔪᑎᑦ</h2>
+                <p class="text-slate-600 text-sm mt-1">
+                    Official Nunavut Government links, Inuktitut language services, accessibility advocacy, and emergency TTY/SMS contact directories.
+                </p>
+            </div>
+
+            <!-- Official Nunavut Links Showcase Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Resource 1: Official Nunavut Government -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-cyan-100 text-cyan-800 rounded-xl flex items-center justify-center font-bold">
+                                <i data-lucide="building-2" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold text-cyan-600 uppercase tracking-wider">Official Portal</span>
+                                <h3 class="font-bold text-lg text-slate-900">Government of Nunavut (gov.nu.ca)</h3>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Access official territorial government services, public health updates, education programs, and disability support programs across Nunavut.
+                        </p>
+                    </div>
+                    <a href="https://gov.nu.ca/en" target="_blank" rel="noopener" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-between transition">
+                        <span>Visit Official Gov.nu.ca Site</span>
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <!-- Resource 2: Dept of Culture and Heritage -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-indigo-100 text-indigo-800 rounded-xl flex items-center justify-center font-bold">
+                                <i data-lucide="languages" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Inuktitut Language Support</span>
+                                <h3 class="font-bold text-lg text-slate-900">Department of Culture & Heritage</h3>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Official Inuit language initiatives, syllabic standardization guidelines, Elder language preservation, and cultural grants in Nunavut.
+                        </p>
+                    </div>
+                    <a href="https://gov.nu.ca/en" target="_blank" rel="noopener" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-between transition">
+                        <span>Explore Culture & Language Programs</span>
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <!-- Resource 3: Deaf Community Advocacy -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-800 rounded-xl flex items-center justify-center font-bold">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Advocacy & Rights</span>
+                                <h3 class="font-bold text-lg text-slate-900">Deaf & Accessibility Services Nunavut</h3>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Rights to visual sign interpretation in schools, clinics, and municipal centers, plus visual assistive technology for Arctic households.
+                        </p>
+                    </div>
+                    <button onclick="openModalInfo('Deaf Advocacy & Rights', 'Deaf youth in Nunavut are entitled to visual interpreters and accommodations in educational and public settings under territorial accessibility directives.')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-between transition">
+                        <span>View Advocacy & Legal Guide</span>
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Resource 4: Emergency SMS & TTY Directory -->
+                <div class="card-bg bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-rose-100 text-rose-800 rounded-xl flex items-center justify-center font-bold">
+                                <i data-lucide="phone-call" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold text-rose-600 uppercase tracking-wider">Emergency Contacts</span>
+                                <h3 class="font-bold text-lg text-slate-900">Emergency SMS & TTY Contacts</h3>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Text-based emergency contact lines for Qikiqtani General Hospital (Iqaluit), regional health centers, and youth crisis support.
+                        </p>
+                    </div>
+                    <button onclick="openModalInfo('Emergency TTY & Text Directory', 'Iqaluit Dispatch & Regional Health SMS Services:\n- Emergency Text Dispatch: Registered 911 TTY\n- Kamatsiaqtut Help Line (Text Support): 1-800-265-3333\n- Iqaluit Regional Health Center: Text Relay Available')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-between transition">
+                        <span>Open TTY / SMS Directory</span>
+                        <i data-lucide="message-square-text" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Developer Workspace Direct Card -->
+            <div class="card-bg bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Open Source Repository</span>
+                    <h4 class="text-lg font-bold">Collaborate via GitHub Workspace</h4>
+                    <p class="text-xs text-slate-300">Repository link: https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/</p>
+                </div>
+                <a href="https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/" target="_blank" rel="noopener" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold px-5 py-2.5 rounded-xl text-xs whitespace-nowrap transition">
+                    Open Dev Environment
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2 space-y-4">
+                    <div class="flex items-center space-x-3 text-white">
+                        <div class="bg-cyan-500 text-slate-950 p-2 rounded-lg font-bold">
+                            <i data-lucide="hand" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xl font-black">ᑐᓵᔩᑦ Tusaajiit</span>
+                    </div>
+                    <p class="text-xs text-slate-400 max-w-sm leading-relaxed">
+                        Empowering Deaf and Hard of Hearing Inuit youth through visual language tools, Inuktitut syllabic support, and community connection across the North.
+                    </p>
+                    <div class="pt-2">
+                        <a href="https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/" target="_blank" rel="noopener" class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center space-x-1.5 font-semibold">
+                            <i data-lucide="github" class="w-4 h-4"></i>
+                            <span>https://cautious-guacamole-5g9v7xrw97xgcp7x6.github.dev/</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider">Navigation</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="navigateTo('home')" class="hover:text-cyan-400">Home (ᐊᖏᕐᕋᖅ)</button></li>
+                        <li><a href="Signlanguagedictionary.html" target="_blank" rel="noopener" class="hover:text-cyan-400">Learn ISL & Syllabics</a></li>
+                        <li><a href="Culture & Visual Stories.html" target="_blank" rel="noopener" class="hover:text-cyan-400">Culture & Visual Stories</a></li>
+                        <li><a href="Youth%20Stories.html" target="_blank" rel="noopener" class="hover:text-cyan-400">Youth Community Hub</a></li>
+                        <li><a href="resources.html" target="_blank" rel="noopener" class="hover:text-cyan-400">Resources & Gov Links</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider">Territorial Links</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="https://gov.nu.ca/en" target="_blank" rel="noopener" class="hover:text-cyan-400">Government of Nunavut</a></li>
+                        <li><button onclick="navigateTo('resources')" class="hover:text-amber-400">Inuktitut Language Support</button></li>
+                        <li><button onclick="toggleHighContrast()" class="hover:text-amber-400">Toggle High Contrast</button></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
+                <p>© 2026 Tusaajiit Inuit Deaf Youth Hub. Built for Arctic Communities.</p>
+                <div class="flex space-x-4 mt-2 sm:mt-0">
+                    <span class="text-cyan-500">High Contrast Ready</span>
+                    <span>•</span>
+                    <span class="text-emerald-400">Visual Captions Enabled</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Info Modal Box -->
+    <div id="info-modal" class="fixed inset-0 bg-slate-950/80 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 id="modal-title" class="font-bold text-lg text-slate-900">Resource Details</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+            </div>
+            <p id="modal-body" class="text-sm text-slate-600 leading-relaxed whitespace-pre-line"></p>
+            <div class="pt-2 text-right">
+                <button onclick="closeModal()" class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure for Interactive Inuktitut & ISL Flashcards
+        const flashcardData = [
+            {
+                id: 1,
+                syllabics: "ᓇᓄᖅ",
+                romanized: "Nannuk",
+                english: "Polar Bear",
+                category: "animals",
+                islDescription: "Curved claw hands in front of chest, swaying heavy body side to side.",
+                handshape: "Curved Claws (Both hands)",
+                motion: "Heavy side-to-side sway",
+                vibrationCue: "Low steady rhythm"
+            },
+            {
+                id: 2,
+                syllabics: "ᐃᖃᓗᒃ",
+                romanized: "Iqaluk",
+                english: "Fish / Arctic Char",
+                category: "animals",
+                islDescription: "Flat hand placed vertically, wiggling forward like a swimming fish in water.",
+                handshape: "Flat B-Handshape",
+                motion: "Forward serpentine motion",
+                vibrationCue: "Quick light pulses"
+            },
+            {
+                id: 3,
+                syllabics: "ᓯᓚ",
+                romanized: "Sila",
+                english: "Weather / Sky / Environment",
+                category: "nature",
+                islDescription: "Both hands open, sweeping broadly overhead in a large circular arc.",
+                handshape: "Open 5-Hands",
+                motion: "Wide overhead sweep",
+                vibrationCue: "Smooth continuous wave"
+            },
+            {
+                id: 4,
+                syllabics: "ᐊᓈᓇ",
+                romanized: "Anaana",
+                english: "Mother",
+                category: "family",
+                islDescription: "Open hand with thumb gently touching chin area with warm facial expression.",
+                handshape: "Open 5-Hand (Thumb to chin)",
+                motion: "Gentle double tap",
+                vibrationCue: "Soft double pulse"
+            },
+            {
+                id: 5,
+                syllabics: "ᐊᑖᑕ",
+                romanized: "Ataata",
+                english: "Father",
+                category: "family",
+                islDescription: "Open hand with thumb touching forehead area.",
+                handshape: "Open 5-Hand (Thumb to forehead)",
+                motion: "Gentle tap at forehead",
+                vibrationCue: "Single tap pulse"
+            },
+            {
+                id: 6,
+                syllabics: "ᐅᓪᓛᑯᑦ / ᑐᓐᖓᓱᒋᑦ",
+                romanized: "Ullaakut / Tunngasugit",
+                english: "Good Morning / Welcome",
+                category: "phrases",
+                islDescription: "Flat hand moves outward from chin/mouth area with a welcoming smile.",
+                handshape: "Flat Open Palm",
+                motion: "Forward arc away from face",
+                vibrationCue: "Uplifting pulse"
+            }
+        ];
+
+        let currentCategory = 'all';
+        let highContrast = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderFlashcards();
+        });
+
+        function navigateTo(pageId) {
+            const pages = document.querySelectorAll('.view-page');
+            pages.forEach(p => p.classList.add('hidden'));
+
+            const activePage = document.getElementById(`page-${pageId}`);
+            if (activePage) {
+                activePage.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-cyan-600', 'bg-slate-100', 'font-extrabold');
+            });
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if (activeNav) {
+                activeNav.classList.add('text-cyan-600', 'bg-slate-100', 'font-extrabold');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderFlashcards() {
+            const container = document.getElementById('flashcards-grid');
+            if (!container) return;
+
+            const filtered = currentCategory === 'all' 
+                ? flashcardData 
+                : flashcardData.filter(item => item.category === currentCategory);
+
+            container.innerHTML = filtered.map(card => `
+                <div class="card-bg bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition relative group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+                            <div>
+                                <span class="text-3xl font-black text-cyan-600 block tracking-wide">${card.syllabics}</span>
+                                <span class="text-sm font-bold text-slate-800">${card.romanized}</span>
+                            </div>
+                            <span class="bg-slate-100 text-slate-600 font-bold text-xs px-2.5 py-1 rounded-full uppercase tracking-wider">${card.category}</span>
+                        </div>
+
+                        <div>
+                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">English Translation</span>
+                            <h4 class="text-lg font-bold text-slate-900">${card.english}</h4>
+                        </div>
+
+                        <div class="bg-cyan-50 border border-cyan-100 p-4 rounded-xl space-y-2">
+                            <div class="flex items-center space-x-2 text-cyan-800 font-bold text-xs">
+                                <i data-lucide="hand" class="w-4 h-4"></i>
+                                <span>ISL Visual Sign Motion</span>
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                ${card.islDescription}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 mt-2">
+                        <button onclick="openModalInfo('${card.syllabics} (${card.english})', 'ISL Motion: ${card.islDescription}\nHandshape: ${card.handshape}\nVibration Signal: ${card.vibrationCue}')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
+                            <i data-lucide="play-circle" class="w-4 h-4 text-cyan-400"></i>
+                            <span>View Visual Motion Demo</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function filterFlashcards(category) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-600', 'text-white');
+                btn.classList.add('bg-slate-200', 'text-slate-700');
+            });
+
+            const activeBtn = document.getElementById(`btn-filter-${category}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-200', 'text-slate-700');
+                activeBtn.classList.add('bg-cyan-600', 'text-white');
+            }
+
+            renderFlashcards();
+        }
+
+        function toggleHighContrast() {
+            highContrast = !highContrast;
+            const body = document.getElementById('app-body');
+            body.classList.toggle('high-contrast', highContrast);
+        }
+
+        function changeFontSize(size) {
+            const body = document.getElementById('app-body');
+            body.classList.remove('text-sm', 'text-base', 'text-lg');
+
+            if (size === 'medium') body.classList.add('text-base');
+            else if (size === 'large') body.classList.add('text-lg');
+            else body.classList.add('text-sm');
+        }
+
+        function toggleSimplifiedLayout() {
+            const body = document.getElementById('app-body');
+            body.classList.toggle('max-w-4xl');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function openModalInfo(title, text) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-body').innerText = text;
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        function openNewPostModal() {
+            const postText = prompt("Enter your message or visual artwork description for Deaf Inuit youth:");
+            if (postText && postText.trim() !== "") {
+                const feed = document.getElementById('posts-feed');
+                const newPostHTML = `
+                    <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                        <div class="flex justify-between items-center text-xs text-slate-500">
+                            <span class="font-bold text-cyan-900">You (Youth Member)</span>
+                            <span>Just Now</span>
+                        </div>
+                        <p class="text-sm text-slate-800 font-medium">${postText}</p>
+                    </div>
+                `;
+                feed.insertAdjacentHTML('afterbegin', newPostHTML);
+            }
+        }
+    </script>
+</body>
+</html>
